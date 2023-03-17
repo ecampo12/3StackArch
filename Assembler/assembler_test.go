@@ -12,7 +12,11 @@ import (
 // helper function to read a file and return the contents as a string slice
 func readFile(fileName string) []string {
 	var lines []string
-	file, err := os.Open(fileName)
+	wd, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+	file, err := os.Open(wd + fileName)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -33,9 +37,9 @@ func readFile(fileName string) []string {
 func TestAssembler(t *testing.T) {
 	// var testLines []string
 	incorrectLines := 0
-	correctLines := readFile("Assembler/test_files/Simple_Instruction_trans.txt")
+	correctLines := readFile("/test_files/Simple_Instructions_trans.txt")
 
-	parser := NewParser("Assembler/test_files/Simple_Instruction.txt")
+	parser := NewParser("/test_files/Simple_Instructions.txt")
 
 	parser.Parse()
 

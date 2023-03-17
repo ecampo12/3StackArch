@@ -2,6 +2,7 @@ package assembler
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -20,7 +21,11 @@ func NewParser(fileName string) *Parser {
 		wordLenght: 1,
 		instOffset: 0,
 	}
-	file, err := os.Open(fileName)
+	wd, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+	file, err := os.Open(wd + fileName)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -76,9 +81,9 @@ func (p *Parser) Parse() {
 			if strings.Contains(line, label) {
 				if strings.Contains(line, "beq") || strings.Contains(line, "bgt") {
 					newAddress := address - (i + 1)
-					p.lines[i] = strings.Replace(line, label, string(newAddress), 1)
+					p.lines[i] = strings.Replace(line, label, fmt.Sprint(newAddress), 1)
 				} else {
-					p.lines[i] = strings.Replace(line, label, string(address), 1)
+					p.lines[i] = strings.Replace(line, label, fmt.Sprint(address), 1)
 				}
 			}
 		}
