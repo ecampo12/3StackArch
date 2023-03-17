@@ -68,12 +68,12 @@ func (c *Conversion) convert(line string, sType string) string {
 			// TODO: throw error if the immediate value is too large
 		}
 
-		if temp >= 0 {
-			// imm = strconv.FormatInt(temp, 2)
-			imm = fmt.Sprintf("%0"+strconv.Itoa(int(temp))+"d", temp)
+		binaryStr := strconv.FormatInt(temp, 2)
+		if len(binaryStr) > 10 {
+			imm = binaryStr[len(binaryStr)-10:]
 		} else {
-			imm = strconv.Itoa(int(temp))
-			imm = imm[len(imm)-10:]
+			// Pad with leading zeros if necessary
+			imm = fmt.Sprintf("%010s", binaryStr)
 		}
 	}
 

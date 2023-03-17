@@ -50,9 +50,21 @@ func TestAssembler(t *testing.T) {
 
 	for i, line := range result {
 		if line != correctLines[i] {
+			incorrectLines++
 			t.Errorf("Expected %s, got %s", correctLines[i], line)
 		}
 	}
 
-	assert.Equal(t, incorrectLines, 0)
+	// write the output to a file
+	f, err := os.Create("test_result.out")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+
+	for _, line := range result {
+		f.WriteString(line + "\n")
+	}
+
+	assert.Equal(t, 0, incorrectLines)
 }

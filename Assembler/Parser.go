@@ -55,11 +55,11 @@ func (p *Parser) Parse() {
 
 	// First pass, removes comments and empty lines
 	for i := len(p.lines) - 1; i >= 0; i-- {
-		p.lines[i] = strings.TrimSpace(p.lines[i])
 		// Checks for comments and removes them
 		if strings.Contains(p.lines[i], "#") {
 			p.lines[i] = p.lines[i][:strings.Index(p.lines[i], "#")]
 		}
+		p.lines[i] = strings.TrimSpace(p.lines[i])
 		// Removes empty lines
 		if p.lines[i] == "" {
 			p.lines = append(p.lines[:i], p.lines[i+1:]...)
