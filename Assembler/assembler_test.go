@@ -34,7 +34,31 @@ func readFile(fileName string) []string {
 	return lines
 }
 
-func TestAssembler(t *testing.T) {
+func TestConversionErrors(t *testing.T) {
+	inst2Long := []string{"push 1 2"}
+	OTypeLong := []string{"add 1"}
+	ItypeShort := []string{"addi"}
+	invalidInst := []string{"elvis"}
+	imm2Big := []string{"push 1111"}
+
+	c := NewConversion(inst2Long)
+	assert.Error(t, c.ToBinary("test"), "too many arguments")
+
+	c = NewConversion(OTypeLong)
+	assert.Error(t, c.ToBinary("test"), "add does not take an immediate value")
+
+	c = NewConversion(ItypeShort)
+	assert.Error(t, c.ToBinary("test"), "addi requires an immediate value")
+
+	c = NewConversion(invalidInst)
+	assert.Error(t, c.ToBinary("test"), "elvis is an invalid instruction")
+
+	c = NewConversion(imm2Big)
+	assert.Error(t, c.ToBinary("test"), "1111 is too large for an immediate value")
+
+}
+
+func TestAssemblerSimple(t *testing.T) {
 	// var testLines []string
 	incorrectLines := 0
 	correctLines := readFile("/test_files/Simple_Instructions_trans.txt")

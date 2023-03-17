@@ -1,6 +1,7 @@
 package assembler
 
 import (
+	"errors"
 	"fmt"
 	"math/bits"
 	"strconv"
@@ -22,33 +23,41 @@ func (c *Conversion) GetOutput() []string {
 	return c.output
 }
 
-func (c *Conversion) ToBinary(sType string) {
+func (c *Conversion) ToBinary(sType string) error {
 	for _, line := range c.lines {
-		c.output = append(c.output, c.convert(line, sType))
+		convert, err := c.convert(line, sType)
+		if err != nil {
+			// fmt.Errorf("Error converting %s: %s", line, err)
+			return err
+		}
+		c.output = append(c.output, convert)
 	}
+	return nil
 }
 
-func (c *Conversion) convert(line string, sType string) string {
+func (c *Conversion) convert(line string, sType string) (string, error) {
 	var opcode string
 	var imm string
 	split := strings.Split(line, " ")
 
 	if len(split) > 2 {
-		// TODO: Handle this error
+		return "", errors.New("too many arguments")
 	}
 
-	// TODO: add check to see if the instruction is valid
 	opcode = Instructions().NameToBinary[split[0]]
+	if opcode == "" {
+		return "", errors.New(split[0] + " is an invalid instruction")
+	}
 
 	switch Instructions().instructionType[split[0]] {
 	case 0:
 		if len(split) > 1 {
-			// TODO: throrw error if there is more than 1 argument
+			return "", errors.New(split[0] + " does not take an immediate value")
 		}
 		imm = "0000000000"
 	case 1:
 		if len(split) < 2 {
-			// TODO: throw error if there are less than 2 arguments
+			return "", errors.New(split[0] + " requires an immediate value")
 		}
 		var temp int64
 
@@ -66,7 +75,7 @@ func (c *Conversion) convert(line string, sType string) string {
 		}
 
 		if temp > 1023 {
-			// TODO: throw error if the immediate value is too large
+			return "", errors.New(split[0] + " immediate value too large. Max value is 1023")
 		}
 
 		numBits := bits.UintSize
@@ -79,19 +88,19 @@ func (c *Conversion) convert(line string, sType string) string {
 			// Pad with leading zeros if necessary
 			imm = fmt.Sprintf("%010s", binaryStr)
 		}
-		fmt.Println(opcode + " " + imm)
+		// fmt.Println(opcode + " " + imm)
 	}
 
 	if sType == "test" {
-		return opcode + " " + imm
+		return opcode + " " + imm, nil
 	}
 	if sType == "bin" {
-		return opcode + imm
+		return opcode + imm, nil
 	}
 
-	test := opcode + imm
+	hex := opcode + imm
 	// string to int
-	num, _ := strconv.Atoi(test)
+	num, _ := strconv.Atoi(hex)
 	// convert to hex
-	return strconv.FormatInt(int64(num), 16)
+	return strconv.FormatInt(int64(num), 16), nil
 }
