@@ -99,12 +99,15 @@ func TestAssemblerSimple(t *testing.T) {
 	parser := NewParser("/test_files/Simple_Instructions.txt")
 
 	parser.Parse()
+	writeFile("simple_test_result.parse", parser.GetLines())
 
 	c := NewConversion(parser.GetLines())
 
-	c.ToBinary("test")
+	err := c.ToBinary("test")
+	assert.NoError(t, err, "should not have an error")
 	result := c.GetOutput()
 
+	assert.NotEmpty(t, result, "result should not be empty")
 	for i, line := range result {
 		if line != correctLines[i] {
 			incorrectLines++
@@ -122,10 +125,14 @@ func TestAssemblerSimpleLables(t *testing.T) {
 
 	parser := NewParser("/test_files/Simple_w_Lables.txt")
 	parser.Parse()
+	writeFile("simple_w_lables_test_result.parse", parser.GetLines())
 
 	c := NewConversion(parser.GetLines())
-	c.ToBinary("test")
+	err := c.ToBinary("test")
+	assert.NoError(t, err, "should not have an error")
 	result := c.GetOutput()
+
+	assert.NotEmpty(t, result, "result should not be empty")
 
 	for i, line := range result {
 		if line != correctLines[i] {
