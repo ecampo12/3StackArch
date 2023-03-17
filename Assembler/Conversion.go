@@ -2,6 +2,7 @@ package assembler
 
 import (
 	"fmt"
+	"math/bits"
 	"strconv"
 	"strings"
 )
@@ -68,13 +69,17 @@ func (c *Conversion) convert(line string, sType string) string {
 			// TODO: throw error if the immediate value is too large
 		}
 
-		binaryStr := strconv.FormatInt(temp, 2)
+		numBits := bits.UintSize
+		binaryRep := bits.RotateLeft16(uint16(temp), numBits)
+
+		binaryStr := fmt.Sprintf("%010b", binaryRep)
 		if len(binaryStr) > 10 {
 			imm = binaryStr[len(binaryStr)-10:]
 		} else {
 			// Pad with leading zeros if necessary
 			imm = fmt.Sprintf("%010s", binaryStr)
 		}
+		fmt.Println(opcode + " " + imm)
 	}
 
 	if sType == "test" {
