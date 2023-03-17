@@ -1,0 +1,8 @@
+LOOP:
+pushi 1
+pushi 1
+add
+bgt DONE
+
+DONE:
+j LOOP

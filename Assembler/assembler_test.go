@@ -34,6 +34,35 @@ func readFile(fileName string) []string {
 	return lines
 }
 
+// helper function to write test results to a file, creates a directory if it doesn't exist
+func writeFile(fileName string, lines []string) {
+	wd, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// create the directory if it doesn't exist
+	if _, err := os.Stat(wd + "/test_results"); os.IsNotExist(err) {
+		os.Mkdir(wd+"/test_results", 0755)
+	}
+
+	// create the file in the directory
+	file, err := os.Create(wd + "/test_results/" + fileName)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	w := bufio.NewWriter(file)
+	for _, line := range lines {
+		_, err := w.WriteString(line + "\n")
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	w.Flush()
+}
+
 func TestConversionErrors(t *testing.T) {
 	inst2Long := []string{"push 1 2"}
 	OTypeLong := []string{"add 1"}
@@ -64,7 +93,6 @@ func TestParserError(t *testing.T) {
 }
 
 func TestAssemblerSimple(t *testing.T) {
-	// var testLines []string
 	incorrectLines := 0
 	correctLines := readFile("/test_files/Simple_Instructions_trans.txt")
 
@@ -84,16 +112,28 @@ func TestAssemblerSimple(t *testing.T) {
 		}
 	}
 
-	// write the output to a file
-	f, err := os.Create("test_result.out")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer f.Close()
+	writeFile("simple_test_result.out", result)
+	assert.Equal(t, 0, incorrectLines)
+}
 
-	for _, line := range result {
-		f.WriteString(line + "\n")
+func TestAssemblerSimpleLables(t *testing.T) {
+	incorrectLines := 0
+	correctLines := readFile("/test_files/Simple_w_Lables_trans.txt")
+
+	parser := NewParser("/test_files/Simple_w_Lables.txt")
+	parser.Parse()
+
+	c := NewConversion(parser.GetLines())
+	c.ToBinary("test")
+	result := c.GetOutput()
+
+	for i, line := range result {
+		if line != correctLines[i] {
+			incorrectLines++
+			t.Errorf("Expected %s, got %s", correctLines[i], line)
+		}
 	}
 
+	writeFile("simple_w_lables_test_result.out", result)
 	assert.Equal(t, 0, incorrectLines)
 }
