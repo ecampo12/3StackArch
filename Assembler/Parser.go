@@ -2,6 +2,7 @@ package assembler
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -47,10 +48,10 @@ func (p *Parser) GetLines() []string {
 	return p.lines
 }
 
-func (p *Parser) Parse() {
+func (p *Parser) Parse() error {
 	labels := make(map[string]int)
 	if len(p.lines) > 256 {
-		return // TODO: throw error, too many lines
+		return errors.New("file exceeds 256 lines")
 	}
 
 	// First pass, removes comments and empty lines
@@ -88,4 +89,5 @@ func (p *Parser) Parse() {
 			}
 		}
 	}
+	return nil
 }

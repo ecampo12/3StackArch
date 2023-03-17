@@ -58,6 +58,11 @@ func TestConversionErrors(t *testing.T) {
 
 }
 
+func TestParserError(t *testing.T) {
+	p := NewParser("/test_files/long_program.txt")
+	assert.Error(t, p.Parse(), "file exceeds 256 lines")
+}
+
 func TestAssemblerSimple(t *testing.T) {
 	// var testLines []string
 	incorrectLines := 0
