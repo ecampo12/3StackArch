@@ -54,7 +54,7 @@ func (p *Parser) Parse() error {
 		return errors.New("file exceeds 256 lines")
 	}
 
-	// First pass, removes comments and empty lines
+	// First pass, removes comments, empty lines. Removes labels and adds them to the map
 	for i := len(p.lines) - 1; i >= 0; i-- {
 		// Checks for comments and removes them
 		if strings.Contains(p.lines[i], "#") {
@@ -68,11 +68,14 @@ func (p *Parser) Parse() error {
 	}
 
 	// Second pass, removes labels and adds them to the map
-	for i, line := range p.lines {
-		if strings.Contains(line, ":") {
-			labels[line[:strings.Index(line, ":")]] = i - p.instOffset
-			p.instOffset++
-			p.lines[i] = line[strings.Index(line, ":")+1:]
+	for i := 0; i < len(p.lines); i++ {
+		if strings.Contains(p.lines[i], ":") {
+			labels[p.lines[i][:strings.Index(p.lines[i], ":")]] = i
+			// - p.instOffset
+			// p.instOffset++
+			// p.lines[i] = p.lines[i][strings.Index(p.lines[i], ":")+1:]
+			// remove the line
+			p.lines = append(p.lines[:i], p.lines[i+1:]...)
 		}
 	}
 
@@ -81,7 +84,7 @@ func (p *Parser) Parse() error {
 		for label, address := range labels {
 			if strings.Contains(line, label) {
 				if strings.Contains(line, "beq") || strings.Contains(line, "bgt") {
-					newAddress := address - (i + 1)
+					newAddress := address - i - 1
 					p.lines[i] = strings.Replace(line, label, fmt.Sprint(newAddress), 1)
 				} else {
 					p.lines[i] = strings.Replace(line, label, fmt.Sprint(address), 1)
