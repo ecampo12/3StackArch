@@ -1,4 +1,4 @@
-package assembler
+package Assembler
 
 type Instruction struct {
 	NameToBinary    map[string]string

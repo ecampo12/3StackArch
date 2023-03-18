@@ -1,4 +1,4 @@
-package assembler
+package Assembler
 
 import (
 	"bufio"
