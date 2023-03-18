@@ -8,7 +8,7 @@ import (
 
 // explains how the assembler is used
 func Usage() {
-	fmt.Println("Usage: assembler <inputFile> <outputFile>")
+	fmt.Println("Usage: assembler </inputFile> <outputFile>")
 }
 
 func Assemble(inputFile string, outputFile string) error {
@@ -19,8 +19,10 @@ func Assemble(inputFile string, outputFile string) error {
 		// os.Exit(1)
 		return err
 	}
-	file, err := os.Open(wd + "/" + inputFile)
-	fmt.Println(wd + "/" + inputFile)
+	file, err := os.Open(wd + inputFile)
+	// file, err := os.Open(inputFile)
+	fmt.Println(wd)
+	fmt.Println(wd + inputFile)
 	if err != nil {
 		// fmt.Println("Error opening input file:", err)
 		// os.Exit(1)
