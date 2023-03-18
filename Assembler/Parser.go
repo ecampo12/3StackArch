@@ -10,17 +10,13 @@ import (
 )
 
 type Parser struct {
-	fileName   string
-	wordLenght int
-	instOffset int
-	lines      []string
+	fileName string
+	lines    []string
 }
 
 func NewParser(fileName string) *Parser {
 	var p Parser = Parser{
-		fileName:   fileName,
-		wordLenght: 1,
-		instOffset: 0,
+		fileName: fileName,
 	}
 	wd, err := os.Getwd()
 	if err != nil {
@@ -71,9 +67,6 @@ func (p *Parser) Parse() error {
 	for i := 0; i < len(p.lines); i++ {
 		if strings.Contains(p.lines[i], ":") {
 			labels[p.lines[i][:strings.Index(p.lines[i], ":")]] = i
-			// - p.instOffset
-			// p.instOffset++
-			// p.lines[i] = p.lines[i][strings.Index(p.lines[i], ":")+1:]
 			// remove the line
 			p.lines = append(p.lines[:i], p.lines[i+1:]...)
 		}
