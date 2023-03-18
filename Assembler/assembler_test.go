@@ -170,3 +170,29 @@ func TestAssemblerComplex(t *testing.T) {
 	writeFile("real_prime_test_result.out", result)
 	assert.Equal(t, 0, incorrectLines)
 }
+
+// func TestAssemblerComplexHex(t *testing.T) {
+// 	incorrectLines := 0
+// 	correctLines := readFile("/test_files/Real_Prime_trans_hex.txt")
+
+// 	parser := NewParser("/test_files/Real_Prime.txt")
+// 	parser.Parse()
+// 	writeFile("real_prime_hex_test_result.parse", parser.GetLines())
+
+// 	c := NewConversion(parser.GetLines())
+// 	err := c.ToBinary("")
+// 	assert.NoError(t, err, "should not have an error")
+// 	result := c.GetOutput()
+
+// 	assert.NotEmpty(t, result, "result should not be empty")
+
+// 	for i, line := range result {
+// 		if line != correctLines[i] {
+// 			incorrectLines++
+// 			t.Errorf("Expected %s, got %s", correctLines[i], line)
+// 		}
+// 	}
+
+// 	writeFile("real_prime_hex_test_result.out", result)
+// 	assert.Equal(t, 0, incorrectLines)
+// }

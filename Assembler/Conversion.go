@@ -94,13 +94,17 @@ func (c *Conversion) convert(line string, sType string) (string, error) {
 	if sType == "test" {
 		return opcode + " " + imm, nil
 	}
-	if sType == "bin" {
-		return opcode + imm, nil
-	}
 
-	hex := opcode + imm
-	// string to int
-	num, _ := strconv.Atoi(hex)
-	// convert to hex
-	return strconv.FormatInt(int64(num), 16), nil
+	return opcode + imm, nil
+
+	// hex := opcode + imm
+	// // string to int
+	// // num, _ := strconv.Atoi(hex)
+	// num, _ := strconv.ParseInt(hex, 2, 16)
+	// fmt.Println(num)
+	// fmt.Printf("%04X\n", num)
+	// // convert to hex
+	// // return strconv.FormatInt(int64(num), 16), nil
+
+	// return fmt.Sprintf("%04x", num), nil
 }
