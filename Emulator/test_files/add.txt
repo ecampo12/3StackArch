@@ -1,0 +1,3 @@
+pushi 10
+pushi 20
+add

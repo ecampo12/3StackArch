@@ -19,6 +19,8 @@ type Processor struct {
 	// 		8: OUF - Output flag
 	// 		7:0 - unused
 	flagRegister []bool // flag register
+
+	ProgramExit bool // flag to exit the program
 }
 
 const stackBufferAddr = 0x03FF // 1023
@@ -28,9 +30,9 @@ const stackBufferAddr = 0x03FF // 1023
 addresses swapped for the emulator. The stack on the hardware grows down, but
 the stack on the emulator grows up.
 */
-const wspStartAddr, wspEndAddr = 0x02D0, 0x03FE         // 720, 1022
-const dspStartAddr, dspEndAddr = 0x0250, 0x02CF         // 592, 719
-const rspStartAddr, rspEndAddr = 0x0240, 0x024F         // 576, 591
+const wspStartAddr, wspEndAddr = 0x03FE, 0x02D0         // 1022, 720
+const dspStartAddr, dspEndAddr = 0x02CF, 0x0250         // 719, 592
+const rspStartAddr, rspEndAddr = 0x024F, 0x0240         // 591, 576
 const handlerStartAddr, handlerEndAddr = 0x0100, 0x023F // 256, 575
 
 // NewProcessor creates a new processor
@@ -52,7 +54,7 @@ func (p *Processor) LoadProgram(program []int16) {
 	// for i, instruction := range program {
 	// 	p.ram[i] = instruction
 	// }
-	copy(program, p.ram[0:len(program)])
+	copy(p.ram[0:len(program)], program)
 }
 
 // // imm is a 10 bit signed integer, so we need to sign extend it
@@ -73,14 +75,14 @@ func (p *Processor) DecodeInstruction() {
 	opcode := instruction >> 10
 	imm := instruction & 0x03FF
 	switch opcode {
-	case 0b100000:
+	case 31:
 		p.add()
 	case 0b100001:
 		p.addi(imm)
 	case 0b100010:
 		p.and()
 	case 0b100100:
-		p.addi(imm)
+		p.andi(imm)
 	case 0b101000:
 		p.blt(imm)
 	case 0b110000:
@@ -130,4 +132,5 @@ func (p *Processor) DecodeInstruction() {
 	default:
 		panic("invalid opcode")
 	}
+	p.programCounter += 1
 }
