@@ -94,7 +94,7 @@ func (p *Processor) clr(imm int16) {
 	p.wsp += imm << 1
 }
 
-func exit() {
+func (p *Processor) exit() {
 	os.Exit(0)
 }
 
