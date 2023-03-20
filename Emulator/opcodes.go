@@ -23,7 +23,7 @@ func (p *Processor) add() {
 }
 
 // M[$wsp] = M[$wsp] + SignExtImm
-func (p *Processor) addi(imm int16) {
+func (p *Processor) addi(imm uint16) {
 	p.ram[p.wsp] = p.ram[p.wsp] + imm
 }
 
@@ -35,13 +35,13 @@ func (p *Processor) and() {
 }
 
 // M[$wsp] = M[$wsp] & ZeroExtImm
-func (p *Processor) andi(imm int16) {
+func (p *Processor) andi(imm uint16) {
 	p.ram[p.wsp] = p.ram[p.wsp] & imm
 }
 
 // (SF == 1) ? $pc = $pc + 2 + BranchAddr :
 // $pc = $pc +2
-func (p *Processor) blt(imm int16) {
+func (p *Processor) blt(imm uint16) {
 	if p.flagRegister[13] {
 		p.programCounter = p.programCounter + 1 + imm
 	} else {
@@ -50,7 +50,7 @@ func (p *Processor) blt(imm int16) {
 }
 
 // (SF == 0 && ZF == 0) ? $pc = $pc + 2 +BranchAddr : $pc = $pc +2
-func (p *Processor) bgt(imm int16) {
+func (p *Processor) bgt(imm uint16) {
 	if !p.flagRegister[13] && !p.flagRegister[11] {
 		p.programCounter = p.programCounter + 1 + imm
 	} else {
@@ -59,7 +59,7 @@ func (p *Processor) bgt(imm int16) {
 }
 
 // (ZF == 1) ? $pc = $pc + 2 + BranchAddr : $pc = $pc +2
-func (p *Processor) beq(imm int16) {
+func (p *Processor) beq(imm uint16) {
 	if p.flagRegister[11] {
 		p.programCounter = p.programCounter + 1 + imm
 	} else {
@@ -68,7 +68,7 @@ func (p *Processor) beq(imm int16) {
 }
 
 // $rsp = $rsp – 2 , M[$rsp] = $pc + 2, $pc = CalleeAddr
-func (p *Processor) call(imm int16) {
+func (p *Processor) call(imm uint16) {
 	p.rsp -= 1
 	p.ram[p.rsp] = p.programCounter + 1
 	p.programCounter = imm
@@ -92,7 +92,7 @@ func (p *Processor) cmp() {
 }
 
 // $wsp = $wsp + (SignExtImm<<1)
-func (p *Processor) clr(imm int16) {
+func (p *Processor) clr(imm uint16) {
 	p.wsp += imm << 1
 }
 
@@ -100,11 +100,11 @@ func (p *Processor) exit() {
 	fmt.Println("Program exited successfully")
 	fmt.Println("Top of working stack: ", p.ram[p.wsp])
 	// os.Exit(0)
-	p.ProgramExit = true
+	p.programExit = true
 }
 
 // $pc = JumpAddr
-func (p *Processor) j(imm int16) {
+func (p *Processor) j(imm uint16) {
 	p.programCounter = imm
 }
 
@@ -115,24 +115,24 @@ func (p *Processor) js() {
 }
 
 // $wsp = $wsp – 2, M[$wsp] = M[ $dsp + SignExtImm<<1]
-func (p *Processor) ld(imm int16) {
+func (p *Processor) ld(imm uint16) {
 	p.wsp -= 1
 	p.ram[p.wsp] = p.ram[p.dsp+(imm<<1)]
 }
 
 // $wsp = $wsp – 2, M[$wsp] = Upper8bit(Imm) 8’b0
-func (p *Processor) lui(imm int16) {
+func (p *Processor) lui(imm uint16) {
 	p.wsp -= 1
 	p.ram[p.wsp] = imm << 8
 }
 
 // $dsp = $dsp + Imm<<1
-func (p *Processor) mdsp(imm int16) {
+func (p *Processor) mdsp(imm uint16) {
 	p.dsp += imm << 1
 }
 
 // M[$wsp] = M[$wsp] | ZeroExtImm
-func (p *Processor) ori(imm int16) {
+func (p *Processor) ori(imm uint16) {
 	p.ram[p.wsp] = p.ram[p.wsp] | imm
 }
 
@@ -144,19 +144,19 @@ func (p *Processor) or() {
 }
 
 // M[MemAddress] = M[$wsp], $wsp = $wsp + 2
-func (p *Processor) pop(imm int16) {
+func (p *Processor) pop(imm uint16) {
 	p.ram[imm] = p.ram[p.wsp]
 	p.wsp += 1
 }
 
 // $wsp = $wsp – 2, M[$wsp] = SignExtImm
-func (p *Processor) pushi(imm int16) {
+func (p *Processor) pushi(imm uint16) {
 	p.wsp -= 1
 	p.ram[p.wsp] = imm
 }
 
 // M[$wsp], $wsp = $wsp – 2, M[$wsp] = M[MemAddress]
-func (p *Processor) push(imm int16) {
+func (p *Processor) push(imm uint16) {
 	p.ram[p.wsp] = p.ram[imm]
 	p.wsp -= 1
 }
@@ -168,18 +168,18 @@ func (p *Processor) ret() {
 }
 
 // M[$wsp] = M[$wsp] << Imm
-func (p *Processor) sfl(imm int16) {
+func (p *Processor) sfl(imm uint16) {
 	p.ram[p.wsp] = p.ram[p.wsp] << imm
 }
 
 // M[$wsp] = M[$wsp] >> Imm
-func (p *Processor) sfr(imm int16) {
+func (p *Processor) sfr(imm uint16) {
 	p.ram[p.wsp] = p.ram[p.wsp] >> imm
 }
 
 // M[$dsp + SignExtImm<<1] = M[$wsp]
 // $wsp = $wsp + 2
-func (p *Processor) st(imm int16) {
+func (p *Processor) st(imm uint16) {
 	p.ram[p.dsp+(imm<<1)] = p.ram[p.wsp]
 	p.wsp += 1
 }
@@ -187,7 +187,7 @@ func (p *Processor) st(imm int16) {
 // M[$wsp] = M[$wsp+2] - M[$wsp]
 // $wsp = $wsp + 2
 func (p *Processor) sub() {
-	p.ram[p.wsp] = p.ram[p.wsp+1] - p.ram[p.wsp]
+	p.ram[p.wsp+1] = p.ram[p.wsp+1] - p.ram[p.wsp]
 	p.wsp += 1
 }
 

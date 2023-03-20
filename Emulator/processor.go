@@ -1,12 +1,12 @@
 package Emulator
 
 type Processor struct {
-	wsp            int16 // work stack pointer
-	dsp            int16 // data stack pointer
-	rsp            int16 // return stack pointer
-	programCounter int16 // program counter
+	wsp            uint16 // work stack pointer
+	dsp            uint16 // data stack pointer
+	rsp            uint16 // return stack pointer
+	programCounter uint16 // program counter
 
-	ram [0x03FF]int16 // 1024 words of memory
+	ram [0x0400]uint16 // 1024 words of memory
 
 	// 16 flags:
 	// 		15: CF - carry flag
@@ -20,7 +20,7 @@ type Processor struct {
 	// 		7:0 - unused
 	flagRegister []bool // flag register
 
-	ProgramExit bool // flag to exit the program
+	programExit bool // flag to exit the program
 }
 
 const stackBufferAddr = 0x03FF // 1023
@@ -47,14 +47,17 @@ func NewProcessor() *Processor {
 }
 
 // LoadProgram loads a program into memory
-func (p *Processor) LoadProgram(program []int16) {
+func (p *Processor) LoadProgram(program []uint16) {
 	if len(program) > 255 {
 		panic("program exceeds 255 words, the assembler should have caught this!")
 	}
-	// for i, instruction := range program {
-	// 	p.ram[i] = instruction
-	// }
 	copy(p.ram[0:len(program)], program)
+}
+
+func (p *Processor) Run() {
+	for !p.programExit {
+		p.DecodeInstruction()
+	}
 }
 
 // // imm is a 10 bit signed integer, so we need to sign extend it
@@ -75,7 +78,7 @@ func (p *Processor) DecodeInstruction() {
 	opcode := instruction >> 10
 	imm := instruction & 0x03FF
 	switch opcode {
-	case 31:
+	case 0b100000:
 		p.add()
 	case 0b100001:
 		p.addi(imm)

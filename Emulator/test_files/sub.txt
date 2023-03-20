@@ -1,0 +1,3 @@
+pushi 20
+pushi 10
+sub
