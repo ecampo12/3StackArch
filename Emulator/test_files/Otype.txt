@@ -1,0 +1,9 @@
+add
+and
+cmp
+js
+or 
+sub
+swap
+ret
+exit

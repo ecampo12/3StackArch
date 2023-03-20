@@ -1,5 +1,5 @@
 pushi 0
-pushi 0
+pushi 0 # So the stack is not empty
 addi 0
 andi 0
 blt 0

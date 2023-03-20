@@ -24,19 +24,19 @@ func (p *Processor) add() {
 
 // M[$wsp] = M[$wsp] + SignExtImm
 func (p *Processor) addi(imm uint16) {
-	p.ram[p.wsp] = p.ram[p.wsp] + imm
+	p.ram[p.wsp+1] = p.ram[p.wsp] + imm
 }
 
 // M[$wsp] = M[$wsp+2] & M[$wsp]
 // $wsp = $wsp + 2
 func (p *Processor) and() {
-	p.ram[p.wsp] = p.ram[p.wsp+1] & p.ram[p.wsp]
+	p.ram[p.wsp+1] = p.ram[p.wsp+1] & p.ram[p.wsp]
 	p.wsp += 1
 }
 
 // M[$wsp] = M[$wsp] & ZeroExtImm
 func (p *Processor) andi(imm uint16) {
-	p.ram[p.wsp] = p.ram[p.wsp] & imm
+	p.ram[p.wsp+1] = p.ram[p.wsp] & imm
 }
 
 // (SF == 1) ? $pc = $pc + 2 + BranchAddr :
@@ -133,13 +133,13 @@ func (p *Processor) mdsp(imm uint16) {
 
 // M[$wsp] = M[$wsp] | ZeroExtImm
 func (p *Processor) ori(imm uint16) {
-	p.ram[p.wsp] = p.ram[p.wsp] | imm
+	p.ram[p.wsp+1] = p.ram[p.wsp] | imm
 }
 
 // M[$wsp] = M[$wsp] | M[$wsp + 2]
 // $wsp = $wsp + 2
 func (p *Processor) or() {
-	p.ram[p.wsp] = p.ram[p.wsp] | p.ram[p.wsp+1]
+	p.ram[p.wsp+1] = p.ram[p.wsp] | p.ram[p.wsp+1]
 	p.wsp += 1
 }
 

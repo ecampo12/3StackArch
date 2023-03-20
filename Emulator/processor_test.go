@@ -44,11 +44,21 @@ func TestDecodeInstructions(t *testing.T) {
 	if err != nil {
 		fmt.Println(err)
 	}
-
 	proc.LoadProgram(ItypeInstructions)
-
 	proc.Run()
 
+	proc = NewProcessor()
+	OtypeInstructions, err := assemblerProgram("/test_files/Otype.txt")
+
+	if err != nil {
+		fmt.Println(err)
+	}
+	proc.LoadProgram(OtypeInstructions)
+	// pre-emptively set the stack pointers to prevent errors
+	proc.wsp = 0x02D0    // 720
+	proc.ram[0x024F] = 8 // 591
+	proc.ram[726] = 4
+	proc.Run()
 }
 
 func TestSimplePrograms(t *testing.T) {
